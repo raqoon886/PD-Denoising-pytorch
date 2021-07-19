@@ -84,7 +84,7 @@ def prepare_data(data_path, patch_size, stride, aug_times=1, color=0):
 
 
 #Prepare the data for real image and noise
-def prepare_real_data(real_data_path, noise_data_path, patch_size, stride, aug_times=1, color=0):
+def prepare_real_data(real_data_path: object, noise_data_path: object, patch_size: object, stride: object, aug_times: object = 1, color: object = 0) -> object:
     # train
     print('process training data')
     #scales = [1, 0.9, 0.8, 0.7]
@@ -94,10 +94,12 @@ def prepare_real_data(real_data_path, noise_data_path, patch_size, stride, aug_t
         noise_files = glob.glob(os.path.join(noise_data_path, 'train', '*png'))
         h5f = h5py.File('train.h5', 'w')
     elif color == 1:
-        real_files = glob.glob(os.path.join(real_data_path, 'train_c', '*.jpg'))
-        noise_files = glob.glob(os.path.join(noise_data_path, 'train_c', '*jpg'))
+        real_files = glob.glob(os.path.join(real_data_path, 'train', '*.png'))
+        noise_files = glob.glob(os.path.join(noise_data_path, 'train', '*.png'))
         h5f = h5py.File('train_c.h5', 'w')
-    files.sort()
+    print(real_files)
+    real_files.sort()
+    noise_files.sort()
     train_num = 0
     for i in range(len(real_files)):
         real_img = cv2.imread(real_files[i])
@@ -130,24 +132,24 @@ def prepare_real_data(real_data_path, noise_data_path, patch_size, stride, aug_t
                     h5f.create_dataset(str(train_num)+"_n_aug_%d" % (m+1), data_ndata_aug)
                     train_num += 1
     h5f.close()
-    # val
-    print('\nprocess validation data')
-    #files.clear()
-    files = []
-    files = glob.glob(os.path.join(data_path, 'Set12', '*.png'))
-    files.sort()
-    h5f = h5py.File('val.h5', 'w')
-    val_num = 0
-    for i in range(len(files)):
-        print("file: %s" % files[i])
-        img = cv2.imread(files[i])
-        img = np.expand_dims(img[:,:,0], 0)
-        img = np.float32(normalize(img))
-        h5f.create_dataset(str(val_num), data=img)
-        val_num += 1
-    h5f.close()   
+    # # val
+    # print('\nprocess validation data')
+    # #files.clear()
+    # files = []
+    # files = glob.glob(os.path.join(data_path, 'Set12', '*.png'))
+    # files.sort()
+    # h5f = h5py.File('val.h5', 'w')
+    # val_num = 0
+    # for i in range(len(files)):
+    #     print("file: %s" % files[i])
+    #     img = cv2.imread(files[i])
+    #     img = np.expand_dims(img[:,:,0], 0)
+    #     img = np.float32(normalize(img))
+    #     h5f.create_dataset(str(val_num), data=img)
+    #     val_num += 1
+    # h5f.close()
     print('training set, # samples %d\n' % train_num)
-    print('val set, # samples %d\n' % val_num)
+    # print('val set, # samples %d\n' % val_num)
 
 def generate_noise_level_data(image, image_name, out_folder):
     '''
