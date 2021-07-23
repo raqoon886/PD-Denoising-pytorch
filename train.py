@@ -81,7 +81,8 @@ def main():
         for param_group in optimizer.param_groups:
             param_group["lr"] = current_lr
         print('learning rate %f' % current_lr)
-
+        l = len(loader_train)
+        printProgressBar(0, l, prefix='Progress:', suffix='Complete', length=50)
         # train
         for i, data in enumerate(loader_train, 0):
             # training step
@@ -253,6 +254,28 @@ def main():
         torch.save(model.state_dict(), os.path.join(opt.outf, 'net.pth'))
         if opt.mode == "MC":
             torch.save(est_model.state_dict(), os.path.join(opt.outf, 'est_net.pth'))
+
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
 
 if __name__ == "__main__":
     if opt.preprocess==1:
