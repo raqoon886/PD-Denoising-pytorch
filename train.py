@@ -42,7 +42,11 @@ def main():
     loader_train = DataLoader(dataset=dataset_train, num_workers=16, batch_size=opt.batchSize, shuffle=True)
     print("# of training samples: %d\n" % int(len(dataset_train)))
 
-    c = 1 if opt.color == 0 else 3
+    if opt.color==1:
+        c=3
+    else:
+        c=1
+
     # Build model
     if opt.mode == "MC":
         net = DnCNN_c(channels=c, num_of_layers=opt.num_of_layers, num_of_est = 2 * c)  #denoisor
