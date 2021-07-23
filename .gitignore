@@ -165,3 +165,4 @@ Untitled*.ipynb
 ignored_files/*
 
 # data
+data/*
