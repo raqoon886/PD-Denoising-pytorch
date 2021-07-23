@@ -182,13 +182,14 @@ class Dataset(udata.Dataset):
         super(Dataset, self).__init__()
         self.train = train
         self.c = c
+        self.input_path = input_path
         if self.train:
             if self.c==0:
-                h5f = h5py.File(input_path + '/' +'train.h5', 'r')
+                h5f = h5py.File(self.input_path + '/' +'train.h5', 'r')
             elif self.c==1:
-                h5f = h5py.File(input_path + '/' +'train_c.h5', 'r')
+                h5f = h5py.File(self.input_path + '/' +'train_c.h5', 'r')
         else:
-            h5f = h5py.File(input_path + '/' + 'val.h5', 'r')
+            h5f = h5py.File(self.input_path + '/' + 'val.h5', 'r')
         self.keys = list(h5f.keys())
         random.shuffle(self.keys)
         h5f.close()
@@ -197,11 +198,11 @@ class Dataset(udata.Dataset):
     def __getitem__(self, index):
         if self.train:
             if self.c == 0:
-                h5f = h5py.File(input_path + '/' + 'train.h5', 'r')
+                h5f = h5py.File(self.input_path + '/' + 'train.h5', 'r')
             elif self.c == 1:
-                h5f = h5py.File(input_path + '/' + 'train_c.h5', 'r')
+                h5f = h5py.File(self.input_path + '/' + 'train_c.h5', 'r')
         else:
-            h5f = h5py.File(input_path + '/' + 'val.h5', 'r')
+            h5f = h5py.File(self.input_path + '/' + 'val.h5', 'r')
         key = self.keys[index]
         data = np.array(h5f[key])
         h5f.close()
