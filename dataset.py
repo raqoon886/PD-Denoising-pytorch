@@ -189,7 +189,7 @@ class Dataset(udata.Dataset):
             elif self.c==1:
                 h5f = h5py.File(self.input_path + '/' +'train_c.h5', 'r')
         else:
-            h5f = h5py.File(self.input_path + '/' + 'val.h5', 'r')
+            h5f = h5py.File(self.input_path + '/' + 'val_c.h5', 'r')
         self.keys = list(h5f.keys())
         random.shuffle(self.keys)
         h5f.close()
@@ -202,7 +202,7 @@ class Dataset(udata.Dataset):
             elif self.c == 1:
                 h5f = h5py.File(self.input_path + '/' + 'train_c.h5', 'r')
         else:
-            h5f = h5py.File(self.input_path + '/' + 'val.h5', 'r')
+            h5f = h5py.File(self.input_path + '/' + 'val_c.h5', 'r')
         key = self.keys[index]
         data = np.array(h5f[key])
         h5f.close()
