@@ -19,6 +19,7 @@ import concurrent.futures
 #Basic Configuration
 #noise type to consider: Gaussian, Uniform, Possion, Salt and Pepper
 parser = argparse.ArgumentParser(description="mix-DnCNN")
+parser.add_argument("--input_path", type=str, help="dataset input path")
 parser.add_argument("--preprocess", type=bool, default=False, help='run prepare_data or not')
 parser.add_argument("--batchSize", type=int, default=128, help="Training batch size")
 parser.add_argument("--num_of_layers", type=int, default=20, help="Number of total layers")
@@ -37,7 +38,7 @@ limit_set = [[0,75], [0, 80]]
 def main():
     # Load dataset
     print('Loading dataset ...\n')
-    dataset_train = Dataset(opt.color, train=True)
+    dataset_train = Dataset(opt.input_path, opt.color, train=True)
     #dataset_val = Dataset(opt.color, train=False)
     loader_train = DataLoader(dataset=dataset_train, num_workers=16, batch_size=opt.batchSize, shuffle=True)
     print("# of training samples: %d\n" % int(len(dataset_train)))
