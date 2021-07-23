@@ -178,17 +178,17 @@ def prepare_noise_level_data(data_path, out_path):
         generate_noise_level_data(img, file_name, out_path)
         
 class Dataset(udata.Dataset):
-    def __init__(self, c=0, train=True):
+    def __init__(self, input_path,c=0, train=True):
         super(Dataset, self).__init__()
         self.train = train
         self.c = c
         if self.train:
             if self.c==0:
-                h5f = h5py.File('train.h5', 'r')
+                h5f = h5py.File(input_path + '/' +'train.h5', 'r')
             elif self.c==1:
-                h5f = h5py.File('train_c.h5', 'r')  
+                h5f = h5py.File(input_path + '/' +'train_c.h5', 'r')
         else:
-            h5f = h5py.File('val.h5', 'r')
+            h5f = h5py.File(input_path + '/' + 'val.h5', 'r')
         self.keys = list(h5f.keys())
         random.shuffle(self.keys)
         h5f.close()
@@ -196,12 +196,12 @@ class Dataset(udata.Dataset):
         return len(self.keys)
     def __getitem__(self, index):
         if self.train:
-            if self.c==0:
-                h5f = h5py.File('train.h5', 'r')
-            elif self.c==1:
-                h5f = h5py.File('train_c.h5', 'r')
+            if self.c == 0:
+                h5f = h5py.File(input_path + '/' + 'train.h5', 'r')
+            elif self.c == 1:
+                h5f = h5py.File(input_path + '/' + 'train_c.h5', 'r')
         else:
-            h5f = h5py.File('val.h5', 'r')
+            h5f = h5py.File(input_path + '/' + 'val.h5', 'r')
         key = self.keys[index]
         data = np.array(h5f[key])
         h5f.close()
