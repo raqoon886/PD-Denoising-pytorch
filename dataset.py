@@ -84,19 +84,19 @@ def prepare_data(data_path, patch_size, stride, aug_times=1, color=0):
 
 
 #Prepare the data for real image and noise
-def prepare_real_data(real_data_path, noise_data_path, patch_size, stride, aug_times = 1, color = 0, mode=object):
+def prepare_real_data(real_data_path, noise_data_path, output_path, patch_size, stride, aug_times = 1, color = 0, mode=object):
     # train
     print('process training data')
     #scales = [1, 0.9, 0.8, 0.7]
     scales = [1]
     if color == 0:
-        real_files = glob.glob(os.path.join(real_data_path, 'train', '*.png'))
-        noise_files = glob.glob(os.path.join(noise_data_path, 'train', '*png'))
+        real_files = glob.glob(os.path.join(real_data_path, '*.png'))
+        noise_files = glob.glob(os.path.join(noise_data_path, '*png'))
         h5f = h5py.File('train.h5', 'w')
     elif color == 1:
-        real_files = glob.glob(os.path.join(real_data_path, mode, '*.png'))
-        noise_files = glob.glob(os.path.join(noise_data_path, mode, '*.png'))
-        h5f = h5py.File(mode+'_c.h5', 'w')
+        real_files = glob.glob(os.path.join(real_data_path, '*.png'))
+        noise_files = glob.glob(os.path.join(noise_data_path, '*.png'))
+        h5f = h5py.File(output_path + '/' + mode + '_c.h5', 'w')
     print(real_files)
     real_files.sort()
     noise_files.sort()
