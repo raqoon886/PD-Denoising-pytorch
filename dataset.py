@@ -84,7 +84,7 @@ def prepare_data(data_path, patch_size, stride, aug_times=1, color=0):
 
 
 #Prepare the data for real image and noise
-def prepare_real_data(real_data_path: object, noise_data_path: object, patch_size: object, stride: object, aug_times: object = 1, color: object = 0, mode='train') -> object:
+def prepare_real_data(real_data_path, noise_data_path, patch_size, stride, aug_times = 1, color = 0, mode=object):
     # train
     print('process training data')
     #scales = [1, 0.9, 0.8, 0.7]
