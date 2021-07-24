@@ -28,17 +28,16 @@ def Im2Patch(img, win, stride=1):
     return Y.reshape([endc, win, win, TotalPatNum])
 
 #color=0 for gray, color=1 for color images
-def prepare_data(data_path, patch_size, stride, aug_times=1, color=0):
+def prepare_data(data_path, output_path, patch_size, stride, aug_times=1, color=0, mode=object, label=False):
     # train
     print('process training data')
     #scales = [1, 0.9, 0.8, 0.7]
     scales = [1]
-    if color == 0:
-        files = glob.glob(os.path.join(data_path, 'train', '*.png'))
-        h5f = h5py.File('train.h5', 'w')
-    elif color == 1:
-        files = glob.glob(os.path.join(data_path, 'train_c', '*.jpg'))
-        h5f = h5py.File('train_c.h5', 'w')
+    files = glob.glob(os.path.join(data_path, '*.jpg'))
+    if label:
+        h5f = h5py.File(os.path.join(output_path, '{}_label.h5'.format(mode), 'w')
+    else:
+        h5f = h5py.File(os.path.join(output_path, '{}_input.h5'.format(mode), 'w')
     files.sort()
     train_num = 0
     for i in range(len(files)):
@@ -63,24 +62,24 @@ def prepare_data(data_path, patch_size, stride, aug_times=1, color=0):
                     h5f.create_dataset(str(train_num)+"_aug_%d" % (m+1), data=data_aug)
                     train_num += 1
     h5f.close()
-    # val
-    print('\nprocess validation data')
-    #files.clear()
-    files = []
-    files = glob.glob(os.path.join(data_path, 'Set12', '*.png'))
-    files.sort()
-    h5f = h5py.File('val.h5', 'w')
-    val_num = 0
-    for i in range(len(files)):
-        print("file: %s" % files[i])
-        img = cv2.imread(files[i])
-        img = np.expand_dims(img[:,:,0], 0)
-        img = np.float32(normalize(img))
-        h5f.create_dataset(str(val_num), data=img)
-        val_num += 1
-    h5f.close()
+    # # val
+    # print('\nprocess validation data')
+    # #files.clear()
+    # files = []
+    # files = glob.glob(os.path.join(data_path, 'Set12', '*.png'))
+    # files.sort()
+    # h5f = h5py.File('val.h5', 'w')
+    # val_num = 0
+    # for i in range(len(files)):
+    #     print("file: %s" % files[i])
+    #     img = cv2.imread(files[i])
+    #     img = np.expand_dims(img[:,:,0], 0)
+    #     img = np.float32(normalize(img))
+    #     h5f.create_dataset(str(val_num), data=img)
+    #     val_num += 1
+    # h5f.close()
     print('training set, # samples %d\n' % train_num)
-    print('val set, # samples %d\n' % val_num)
+    # print('val set, # samples %d\n' % val_num)
 
 
 #Prepare the data for real image and noise
@@ -178,32 +177,32 @@ def prepare_noise_level_data(data_path, out_path):
         generate_noise_level_data(img, file_name, out_path)
         
 class Dataset(udata.Dataset):
-    def __init__(self, input_path,c=0, train=True):
+    def __init__(self, input_path, label_path=None, mode='train'):
         super(Dataset, self).__init__()
-        self.train = train
-        self.c = c
         self.input_path = input_path
-        if self.train:
-            if self.c==0:
-                h5f = h5py.File(self.input_path + '/' +'train.h5', 'r')
-            elif self.c==1:
-                h5f = h5py.File(self.input_path + '/' +'train_c.h5', 'r')
-        else:
-            h5f = h5py.File(self.input_path + '/' + 'val_c.h5', 'r')
-        self.keys = list(h5f.keys())
-        random.shuffle(self.keys)
+        self.label_path = label_path
+        self.mode = mode
+        h5f = h5py.File(os.path.join(self.input_path, '{}_input.h5'.format(self.mode)), 'r')
+        self.input_keys = list(h5f.keys())
         h5f.close()
+
     def __len__(self):
-        return len(self.keys)
+        return len(self.input_keys)
+
     def __getitem__(self, index):
-        if self.train:
-            if self.c == 0:
-                h5f = h5py.File(self.input_path + '/' + 'train.h5', 'r')
-            elif self.c == 1:
-                h5f = h5py.File(self.input_path + '/' + 'train_c.h5', 'r')
-        else:
-            h5f = h5py.File(self.input_path + '/' + 'val_c.h5', 'r')
-        key = self.keys[index]
-        data = np.array(h5f[key])
+
+        h5f = h5py.File(os.path.join(self.input_path, '{}_input.h5'.format(self.mode)), 'r')
+        input_keys = list(h5f.keys())
+        input_key = input_keys[index]
+        input_data = np.array(h5f[input_key])
         h5f.close()
-        return torch.Tensor(data)
+
+        h5f = h5py.File(os.path.join(self.label_path, '{}_label.h5'.format(self.mode)), 'r')
+        label_keys = list(h5f.keys())
+        label_key = label_keys[index]
+        label_data = np.array(h5f[label_keys])
+        h5f.close()
+
+        d = {'input' : input_data,
+             'label' : label_data}
+        return d
