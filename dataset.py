@@ -33,7 +33,7 @@ def prepare_data(data_path, output_path, patch_size, stride, aug_times=1, color=
     print('process training data')
     #scales = [1, 0.9, 0.8, 0.7]
     scales = [1]
-    files = glob.glob(os.path.join(data_path, '*.jpg'))
+    files = glob.glob(os.path.join(data_path, '*.png'))
     if label:
         h5f = h5py.File(os.path.join(output_path, '{}_label.h5'.format(mode)), 'w')
     else:
