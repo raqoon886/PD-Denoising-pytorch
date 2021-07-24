@@ -7,7 +7,7 @@ import torch
 import cv2
 import glob
 import torch.utils.data as udata
-from utils import *
+from utils import data_augmentation
 
 def normalize(data):
     return data/255.
