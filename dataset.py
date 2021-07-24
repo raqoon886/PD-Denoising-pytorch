@@ -35,9 +35,9 @@ def prepare_data(data_path, output_path, patch_size, stride, aug_times=1, color=
     scales = [1]
     files = glob.glob(os.path.join(data_path, '*.jpg'))
     if label:
-        h5f = h5py.File(os.path.join(output_path, '{}_label.h5'.format(mode), 'w')
+        h5f = h5py.File(os.path.join(output_path, '{}_label.h5'.format(mode)), 'w')
     else:
-        h5f = h5py.File(os.path.join(output_path, '{}_input.h5'.format(mode), 'w')
+        h5f = h5py.File(os.path.join(output_path, '{}_input.h5'.format(mode)), 'w')
     files.sort()
     train_num = 0
     for i in range(len(files)):
